@@ -1259,11 +1259,13 @@ summary(model_17)
 #lm with latest precipitation and EVI data
 #LEVIN'S INDEX
 library(readr)
-all_data <- read_csv("Modelling_complete_list_EVI.csv")
+all_data <- read_csv("raw_data/Modelling_complete_list_EVI.csv")
 View(all_data)
 model_18 <- lm (Levins_index ~ p7 + evi_mean, data = all_data)
 summary(model_18)
 
+model_22 <- lm (Levins_index ~ p7*evi_mean, data = all_data)
+summary(model_22)
 #Check for Multi-collinearity 
 vif(model_18)
 
@@ -1335,3 +1337,14 @@ p2 <- visreg(model_18, "p7", gg = TRUE) +
 
 # Display them side by side
 p1 + p2
+
+model_21 <- lmer(Levins_index ~ p7 + evi_mean + (1|site), data = all_data)
+summary(model_21)
+
+plot(p3~evi_mean, data = all_data)
+
+
+#ctrl + shift + R to create new sessions
+# Resource richness model -------------------------------------------------
+
+
