@@ -1258,18 +1258,25 @@ p1 <- visreg(model_18, "evi_mean", gg = TRUE) +
   theme_bw() + 
   labs(title = "A", 
        x = "Enhanced Vegetation Index (EVI)", 
-       y = "Levin's Index (Niche Breadth)")
+       y = "Levin's Index (Niche Width)")
 
 # Create Plot B: Rain
 p2 <- visreg(model_18, "p7", gg = TRUE) + 
   theme_bw() + 
   labs(title = "B", 
        x = "7-day Precipitation (mm)", 
-       y = "Levin's Index (Niche Breadth)")
+       y = "Levin's Index (Niche Width)")
 
 # Display them side by side
-p1 + p2
+combined_plot_1 <- p1 + p2
 
+ggsave(
+  filename = "Niche width_lmer.png",  # file name
+  plot = combined_plot_1,                      # your ggplot object    # folder path (change to where you want it saved)
+  width = 10,                               # width in inches
+  height = 6,                               # height in inches
+  dpi = 300                                 # resolution for print quality
+)
 #ctrl + shift + R to create new sessions
 # Resource richness model -------------------------------------------------
 View(all_data)
@@ -1284,22 +1291,29 @@ testDispersion(res_4)
 testOutliers(res_4)
 
 # Create Plot A: EVI
-p1 <- visreg(model_19, "evi_mean", gg = TRUE) + 
+p3 <- visreg(model_19, "evi_mean", gg = TRUE) + 
   theme_bw() + 
   labs(title = "A", 
        x = "Enhanced Vegetation Index (EVI)", 
        y = "Resource_richness")
 
 # Create Plot B: Rain
-p2 <- visreg(model_19, "p7", gg = TRUE) + 
+p4 <- visreg(model_19, "p7", gg = TRUE) + 
   theme_bw() + 
   labs(title = "B", 
        x = "7-day Precipitation (mm)", 
        y = "Resource_richness")
 
 # Display them side by side
-p1 + p2
+combined_plot_2 <- p3 + p4
 
+ggsave(
+  filename = "Resource richness_lmer.png",  # file name
+  plot = combined_plot_2,                      # your ggplot object    # folder path (change to where you want it saved)
+  width = 10,                               # width in inches
+  height = 6,                               # height in inches
+  dpi = 300                                 # resolution for print quality
+)
 # Biomass ratio model -----------------------------------------------------
 View(all_data)
 data_no_inf <- all_data[-1, ]
@@ -1315,21 +1329,30 @@ testDispersion(res_5)
 testOutliers(res_5)
 
 # Create Plot A: EVI
-p1 <- visreg(model_20, "evi_mean", gg = TRUE) + 
+p5 <- visreg(model_20, "evi_mean", gg = TRUE) + 
   theme_bw() + 
   labs(title = "A", 
        x = "Enhanced Vegetation Index (EVI)", 
        y = "Biomass_ratio")
 
 # Create Plot B: Rain
-p2 <- visreg(model_20, "p7", gg = TRUE) + 
+p6 <- visreg(model_20, "p7", gg = TRUE) + 
   theme_bw() + 
   labs(title = "B", 
        x = "7-day Precipitation (mm)", 
        y = "Biomass_ratio")
 
 # Display them side by side
-p1 + p2
+combined_plot_3 <- p5 + p6
+
+ggsave(
+  filename = "Biomass ratio_lmer.png",  # file name
+  plot = combined_plot_3,                      # your ggplot object    # folder path (change to where you want it saved)
+  width = 10,                               # width in inches
+  height = 6,                               # height in inches
+  dpi = 300                                 # resolution for print quality
+)
+
 
 plot(p3~evi_mean, data = all_data)
 
