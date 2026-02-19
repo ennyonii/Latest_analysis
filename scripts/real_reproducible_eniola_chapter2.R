@@ -325,7 +325,7 @@ ggsave(
 #Extra_2 ends
 
 
-#TO CALCULATE how biomass density and rainfall affect PREY COMPOSITION (bray curtis and NMDS)
+#TO CALCULATE how EVI and rainfall(p7) affect PREY COMPOSITION (bray curtis and NMDS)
 library(readxl)
 HMR_IAI <- read_excel("C:/Users/eniol/OneDrive/Desktop/MY THESIS/HMR_IAI.xlsx")
 HMR_IAI_df <- as.data.frame(HMR_IAI)
@@ -341,7 +341,7 @@ library(readr)
 prey_with_location <- read_csv("C:/Desktop/MY THESIS/prey.csv")
 View(prey_with_location)
 write.csv(prey_with_location, "prey_with_location.csv")
-#Hellinger transformation
+#Hellinger transformation for IAI to standardize it
 library(vegan)
 prey_hellinger <- decostand(prey, method = "hellinger")
 nmds <- metaMDS(prey_hellinger, distance = "bray", autotransform = FALSE)
@@ -356,16 +356,19 @@ colors <- c("blue", "red")  # adjust for your groups
 group_colors <- colors[vec]  # assigns color to each point
 
 #To fit environmental data on prey data
-biomass_with_ratio <- read_csv("C:/Desktop/MY THESIS/biomass_with_ratio.csv")
+library(readr)
+biomass_with_ratio <- read_csv("raw_data/biomass_with_ratio.csv")
+View(biomass_with_ratio)
 env_data <- biomass_with_ratio
-
 prey_with_location <- read_csv("C:/Desktop/MY THESIS/prey_with_location.csv")
-
 View(env_data$Location)
 View(prey_with_location)
 env_data_aligned <- env_data[match(prey_with_location$Location, env_data$Location), ]
+View(env_data_aligned)
+
+
 all(prey_with_location$Location == env_data_aligned$Location)
-en <- envfit(nmds, env_data_aligned[, c("Precipitation", "biomass_density")], 
+en <- envfit(nmds, env_data_aligned[, c("p7", "evi_mean")], 
              permutations = 999, na.rm = TRUE)
 print(en)
 
@@ -381,23 +384,23 @@ site_scores$Site <- c("Curralinho", "Curralinho", "Curralinho", "Curralinho",
                                           "Propriá", "Propriá", "Propriá")
 # 2. Extract vector coordinates
 vec_coords <- as.data.frame(scores(en, display = "vectors")) * ordiArrowMul(en)
-rownames(vec_coords) <- c("Rainfall", "Biomass_density")
+rownames(vec_coords) <- c("p7", "evi_mean")
 
 # 3. Final ggplot with Colors
 NMDS_plot <- ggplot() +
   # Plot points colored by Site
-  geom_point(data = site_scores, aes(x = NMDS1, y = NMDS2, color = Site), size = 4) +
+  geom_point(data = site_scores, aes(x = NMDS1, y = NMDS2, color = Site), size = 3) +
   # Add arrows for significant environmental variables
   geom_segment(data = vec_coords, aes(x = 0, y = 0, xend = NMDS1, yend = NMDS2),
-               arrow = arrow(length = unit(0.25, "cm")), color = "black", size = 2) +
+               arrow = arrow(length = unit(0.25, "cm")), color = "black", size = 1) +
   geom_text(data = vec_coords, aes(x = NMDS1, y = NMDS2, label = rownames(vec_coords)),
-            color = "black", fontface = "bold", vjust = -1) +
+            color = "black", vjust = -1) +
   # Use a professional color palette
   scale_color_brewer(palette = "Set1") + 
   theme_bw() +
   labs( subtitle = paste("Stress:", round(nmds$stress, 2)),
         color = "Study Sites") 
-
+print(NMDS_plot)
 
 ggsave(
   "NMDS_plot.png",
@@ -407,7 +410,7 @@ ggsave(
   dpi = 300
 )
 
-
+getwd()
 #Extra 3 - CAP ORDINATION and SIMPER
 library(readxl)
 latest_biomass_dataaAAP <- read_excel("C:/Desktop/MY THESIS/latest_biomass_dataaAA.xlsx")
@@ -1118,11 +1121,10 @@ View(general_fp)
 write.csv(general_fp, "General_FP_Behavior.csv", row.names = FALSE)
 
 
-#PART 2, MODELLING WITH BETTER VARIABLE NUMBERS (RAINFAL)
-#Philippe and some edits from me
+#PART 2, MODELLING WITH BETTER VARIABLE NUMBERS (RAINFALL)
+#Philippe and some edits from me, Philippe did all of the Evi data and gave me a csv list
 
-
-#setwd("D:/URegina/SOARES LAB/precip_brazil/")
+setwd(THESIS)
 rm(list=ls())
 
 library(ncdf4)
@@ -1133,7 +1135,7 @@ library(viridis)
 
 # 1. LOAD DATA ---------------------------------------------------------------
 library(readr)
-samples_list <- read_csv("Dates_coordinates - Sheet1 (1).csv")
+samples_list <- read_csv("raw_data/Dates_coordinates - Sheet1 (2).csv")
 samples_list$date <- as.Date(samples_list$date)
 
 all_results <- list()
@@ -1223,49 +1225,18 @@ write.csv(final_table, "precipitation_all_sampling.csv", row.names = FALSE)
 getwd()
 message("Task complete! Check your folder for the PDF and CSV files.")
 
-#redoing the models 
-#Linear model with new precipitation values only
-library(readxl)
-latest_data <- read_excel("Modelling_complete_list.xlsx")
-View(latest_data)
-model_11 <- lm(Levins_index ~ p7*Biomass_density, data = latest_data)
-summary(model_11)
-model_13 <- lm(Levins_index ~ p7, data = latest_data)
-summary(model_13)
-model_14 <- lm(Levins_index ~ Biomass_density, data = latest_data)
-summary(model_14)
-model_12 <- lm(Levins_index ~ p7+Biomass_density, , data = latest_data)
-summary(model_12)
 
-#Linear mixed-effect model with new precipitation values only
+#lmer with latest precipitation and EVI data
+# Niche width model -------------------------------------------------------
 library(lme4)  
 library(car)
 library(lmerTest)
-latest_data$site <- as.factor(latest_data$site)
 
-model_15 <- lmer(Levins_index ~ p7 + Biomass_density + (1|site), data = latest_data)
-summary(model_15)
-
-#Check for Multi-collinearity 
-vif(model_15)
-
-model_16 <- lmer(Levins_index ~ p7 + (1|site), data = latest_data)
-summary(model_16)
-
-model_17 <- lmer(Levins_index ~ Biomass_density + (1|site), data = latest_data)
-summary(model_17)
-#Above models still having same issues (different p values with interaction and simplified models)
-
-#lm with latest precipitation and EVI data
-#LEVIN'S INDEX
 library(readr)
 all_data <- read_csv("raw_data/Modelling_complete_list_EVI.csv")
 View(all_data)
-model_18 <- lm (Levins_index ~ p7 + evi_mean, data = all_data)
+model_18 <- lmer(Levins_index ~ p7 + evi_mean + (1|site), data = all_data)
 summary(model_18)
-
-model_22 <- lm (Levins_index ~ p7*evi_mean, data = all_data)
-summary(model_22)
 #Check for Multi-collinearity 
 vif(model_18)
 
@@ -1276,46 +1247,7 @@ plot(res_3)
 testDispersion(res_3)
 testOutliers(res_3)
 
-model_19 <- lm (Levins_index ~ p7, data = all_data)
-summary(model_19)
-
-model_20 <- lm (Levins_index ~ evi_mean, data = all_data)
-summary(model_20)
-
-library(ggplot2)
-
-model_18_plot <- ggplot(all_data, aes(x = evi_mean, y = Levins_index, color = p7)) +
-  geom_point(size = 3) +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(
-    x = "Biomass Density",
-    y = "Levins Index",
-    color = "Precipitation"
-  ) +
-  scale_color_gradient(low = "blue", high = "red") +  # More distinct color gradient
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 8.7)
-  )
-
-print(model_18_plot)
-
-
-# install.packages("visreg")
-library(visreg)
-
-# This plots the effect of EVI while "controlling" for p7
-visreg(model_18, "evi_mean", gg = TRUE) + 
-  theme_minimal() +
-  labs(title = "Effect of EVI on Niche Breadth (Controlled for Rain)")
-
-# This plots the effect of Rain while "controlling" for EVI
-visreg(model_18, "p7", gg = TRUE) + 
-  theme_minimal() +
-  labs(title = "Effect of Rain on Niche Breadth (Controlled for EVI)")
-
-
-
+#plot
 # install.packages("patchwork")
 library(patchwork)
 library(visreg)
@@ -1325,7 +1257,7 @@ library(ggplot2)
 p1 <- visreg(model_18, "evi_mean", gg = TRUE) + 
   theme_bw() + 
   labs(title = "A", 
-       x = "Vegetation Productivity (EVI)", 
+       x = "Enhanced Vegetation Index (EVI)", 
        y = "Levin's Index (Niche Breadth)")
 
 # Create Plot B: Rain
@@ -1338,13 +1270,66 @@ p2 <- visreg(model_18, "p7", gg = TRUE) +
 # Display them side by side
 p1 + p2
 
-model_21 <- lmer(Levins_index ~ p7 + evi_mean + (1|site), data = all_data)
-summary(model_21)
-
-plot(p3~evi_mean, data = all_data)
-
-
 #ctrl + shift + R to create new sessions
 # Resource richness model -------------------------------------------------
+View(all_data)
+model_19 <- lmer(Resource_richness ~ p7 + evi_mean + (1|site), data = all_data)
+summary(model_19)
 
+#Model diagnostics
+library("DHARMa")
+res_4 <- simulateResiduals(fittedModel = model_19)
+plot(res_4)
+testDispersion(res_4)
+testOutliers(res_4)
+
+# Create Plot A: EVI
+p1 <- visreg(model_19, "evi_mean", gg = TRUE) + 
+  theme_bw() + 
+  labs(title = "A", 
+       x = "Enhanced Vegetation Index (EVI)", 
+       y = "Resource_richness")
+
+# Create Plot B: Rain
+p2 <- visreg(model_19, "p7", gg = TRUE) + 
+  theme_bw() + 
+  labs(title = "B", 
+       x = "7-day Precipitation (mm)", 
+       y = "Resource_richness")
+
+# Display them side by side
+p1 + p2
+
+# Biomass ratio model -----------------------------------------------------
+View(all_data)
+data_no_inf <- all_data[-1, ]
+data_no_inf$ratioo <- log(data_no_inf$ratio)
+model_20 <- lmer(ratioo ~ p7 + evi_mean + (1|site), data = data_no_inf)
+summary(model_20)
+
+#Model diagnostics
+library("DHARMa")
+res_5 <- simulateResiduals(fittedModel = model_20)
+plot(res_5)
+testDispersion(res_5)
+testOutliers(res_5)
+
+# Create Plot A: EVI
+p1 <- visreg(model_20, "evi_mean", gg = TRUE) + 
+  theme_bw() + 
+  labs(title = "A", 
+       x = "Enhanced Vegetation Index (EVI)", 
+       y = "Biomass_ratio")
+
+# Create Plot B: Rain
+p2 <- visreg(model_20, "p7", gg = TRUE) + 
+  theme_bw() + 
+  labs(title = "B", 
+       x = "7-day Precipitation (mm)", 
+       y = "Biomass_ratio")
+
+# Display them side by side
+p1 + p2
+
+plot(p3~evi_mean, data = all_data)
 
