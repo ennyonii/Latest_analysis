@@ -1,7 +1,9 @@
+############RAINFALL DATA EXTRACTION FROM COPERNICUS#############
+############ENIOLA OLU-AYORINDE & PHILIPPE ####################
+############2026-04-02##############################
 #Getting rainfall data (7 days sum, 3 days sum, 1 day) of the specific sampling sites and dates from the whole rainfall data present on the website
-#Philippe and some edits from me, Philippe did all of the Evi data and gave me a csv list
 
-setwd(THESIS)
+
 rm(list=ls())
 
 library(ncdf4)
