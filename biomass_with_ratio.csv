@@ -1,0 +1,25 @@
+"...1","Location","Aquatic_Biomass","Terrestrial_Biomass","Main_Source","BIOME","Season","ratio","Main_source_by_season","Resource_richness","Month","Precipitation","biomass_density"
+1,"Caatinga",58.1,0,"Aquatic","CAATINGA","Rainy",Inf,"Aquatic",14,"January",44.26,176
+2,"Caatinga",20.5,0.2,"Aquatic","CAATINGA","Rainy",102.5,"Aquatic",17,"April",21.39,176
+3,"Caatinga",10.3,49.3,"Terrestrial","CAATINGA","Dry",0.208924949290061,"Aquatic",18,"July",43.82,176
+4,"Caatinga",49.9,0.1,"Aquatic","CAATINGA","Dry",499,"Aquatic",12,"October",1.022,176
+5,"Iiha",49.3,2.1,"Aquatic","CAATINGA","Rainy",23.4761904761905,"Aquatic",17,"January",44.26,62
+6,"Iiha",60.8,3,"Aquatic","CAATINGA","Rainy",20.2666666666667,"Aquatic",9,"April",21.39,62
+7,"Iiha",24.9,6.1,"Aquatic","CAATINGA","Dry",4.08196721311475,"Aquatic",16,"July",43.82,62
+8,"Iiha",30.5,1.1,"Aquatic","CAATINGA","Dry",27.7272727272727,"Aquatic",8,"October",1.022,62
+9,"Niteroi",35.8,3.3,"Aquatic","CAATINGA","Rainy",10.8484848484848,"Aquatic",12,"January",44.26,100
+10,"Niteroi",36.6,3.7,"Aquatic","CAATINGA","Rainy",9.89189189189189,"Aquatic",12,"April",21.39,100
+11,"Niteroi",21.9,1.2,"Aquatic","CAATINGA","Dry",18.25,"Aquatic",17,"July",43.82,100
+12,"Niteroi",33.1,2.1,"Aquatic","CAATINGA","Dry",15.7619047619048,"Aquatic",13,"October",1.022,100
+13,"UHE Xingo",35.6,64.2,"Terrestrial","CAATINGA","Rainy",0.554517133956386,"Aquatic",29,"January",44.26,81
+14,"UHE Xingo",9.5,1.8,"Aquatic","CAATINGA","Dry",5.27777777777778,"Aquatic",13,"April",43.82,81
+15,"UHE Xingo",4.9,1.2,"Aquatic","CAATINGA","Dry",4.08333333333333,"Aquatic",11,"October",1.022,81
+16,"Amparo",37.5,31.2,"Aquatic","ATLANTIC","Dry",1.20192307692308,"Aquatic",21,"January",7.05,70
+17,"Amparo",9.5,323.9,"Terrestrial","ATLANTIC","Rainy",0.0293300401358444,"Terrestial",16,"April",25.65,70
+18,"Amparo",25.3,4.2,"Aquatic","ATLANTIC","Rainy",6.02380952380952,"Terrestial",18,"July",174.25,70
+19,"Gararu",43.8,1.8,"Aquatic","ATLANTIC","Rainy",24.3333333333333,"Terrestial",19,"April",25.65,107
+20,"Gararu",52.8,71.2,"Terrestrial","ATLANTIC","Rainy",0.741573033707865,"Terrestial",33,"July",174.25,107
+21,"Gararu",25.4,2.2,"Aquatic","ATLANTIC","Dry",11.5454545454545,"Aquatic",11,"October",14.29,107
+22,"Propria",28,1.7,"Aquatic","ATLANTIC","Dry",16.4705882352941,"Aquatic",18,"January",7.05,62
+23,"Propria",24.8,5.6,"Aquatic","ATLANTIC","Rainy",4.42857142857143,"Terrestial",13,"April",25.65,62
+24,"Propria",1.6,86.1,"Terrestrial","ATLANTIC","Rainy",0.0185830429732869,"Terrestial",9,"July",174.25,62
