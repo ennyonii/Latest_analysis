@@ -1,13 +1,16 @@
+############INFLUENCE OF RAINFALL AND TERRESTRIAL BIOMASS ON PREY COMPOSITION#############
+############ENIOLA OLU-AYORINDE###################
+############2026-12-05##############################
+#TO CALCULATE the 3 indexes I will be using for my thesis (IAI, Levin's index, resource biomass)
+
+#T calculate IAI
 library(readxl)
 library(readr)
-The_food_items <- read_excel("C:/Users/ENIOLA OLU-AYORINDE/Desktop/H_M/H_M R.xlsx")
+The_food_items <- read_excel("raw_data/H_M R_new.xlsx")
 dim(The_food_items)
 View(The_food_items)
 columns_to_sum_CJ <- The_food_items[1:20, 9:73]  # Columns I to BU are columns 9 to 73, THIS OPERATION SUMS THE SPECIFIC FIGURES IN THE COLUMNS OF EACH FOOD ITEM UNDER THE SPECIFIED LOCATION-DATE, the result wiill be given in a table for each food item
-column_sums <- colSums(columns_to_sum_CJ, na.rm = TRUE)
-str(columns_to_sum_CJ)
-print(column_sums)
-CurrJan <- column_sums
+CurrJan <- colSums(columns_to_sum_CJ, na.rm = TRUE)
 columns_to_sum_CA <- The_food_items[29:48 , 9:73]  # Columns I to BU are columns 9 to 72
 CurrApr <- colSums(columns_to_sum_CA, na.rm = TRUE)
 print(CurrApr)
@@ -80,7 +83,8 @@ print(PropJul)
 
 
 
-total_sum_PJL<- sum(The_food_items[560:568, 9:73], na.rm = TRUE) #Calculate the total sum of each location-month presented. first one is 66.2
+total_sum_PJL<- sum(The_food_items[560:568, 9:73], na.rm = TRUE) #Calculate the total sum of each location-month presented.This particular line of code is 
+#doe Propria in July, do for all Location month and don't forget to change row and column numbers
 
 
 
@@ -96,13 +100,12 @@ total_samples_PJL <- nrow(List_columns_numeric_values_PJL)  #COUNTS THE NUMBER O
 #sO FREQUENCY OF OCCURRENCE IS THE NUMBER OF COLUMNS THAT HAVE NUMERIC VALUE GREATER THAN 0, WHICH IS 5 (FOOD OCCURRENCE)/THE NUMBER OF ROWS (NOT THE SUM OF VALUES IN THE ROWS), WHICH IS 20
 FO_PJL <- food_occurrence_PJL / total_samples_PJL
 
-View(FO_IJ)
-total_FO <- zapsmall(sum(FO_CJ))
+total_FO <- zapsmall(sum(FO_PJL))
 View(total_FO)
 
-FPFO_NO <- FP_Total_ratio_NO * FO_NO
-sum(FPFO_NO)
-IAI_NO <- FPFO_NO / sum(FPFO_NO)
+FPFO_PJL <- FP_Total_ratio_PJL * FO_PJL
+sum(FPFO_PJL)
+IAI_PJL <- FPFO_PJL / sum(FPFO_PJL)
 
 
 
@@ -142,11 +145,6 @@ levins_indices <- sapply(fp_list, function(fp) {
 })
 # Print Levin’s Index for all location-months
 print(levins_indices)
-
-
-# Load necessary libraries
-library(dplyr)
-library(tidyr)
 
 
 #TO EXPORT NECESSARY RESULTS TO EXCEL
@@ -189,6 +187,8 @@ data_frame <- data.frame(
   IAI_IO = IAI_IO,
   IAI_NA = IAI_NA,
   IAI_NJ = IAI_NJ,
+  IAI_NJL = IAI_NJL,
+  IAI_NO = IAI_NO,
   IAI_PA = IAI_PA,
   IAI_PJ = IAI_PJ,
   IAI_PJL = IAI_PJL,
@@ -201,7 +201,6 @@ write.xlsx(data_frame, file = "output.xlsx")
 
 
 
-?write_xlsx
 library(writexl)
 # Convert named numeric vectors to data frames
 IAI_NJL_df <- data.frame(IAI_NJL = IAI_NJL)
@@ -213,89 +212,7 @@ combined_data <- cbind(IAI_NJL_df, IAI_NO_df)
 write_xlsx(combined_data, "IAI_data.xlsx")
 
 
-
-
-#for biomass
-# Step 1: Check column names in your data
-print(colnames(The_food_items))
-
-# Step 2: Define aquatic and terrestrial items (ensure they match column names)
-aquatic_items <- c("Amphipoda", "Baetidae", "Caenidae", "Shrimp.L", "Calamoceratidae", 
-                   "Ceratopogonidae", "Chaoboridae", "Chironomidae.L", "Chironomidae.pupa", 
-                   "Copepoda", "Corixidae", "Cladocera", "Diptera.pupa", "Diptera.adult", 
-                   "Dytiscidae", "Elmidae", "Empididae", "Gerrridae", "Ephemeroptera", 
-                   "Helicopsychidae", "Hydropsychidae", "Leptoceridae", "Leptohyphes", 
-                   "Libellulidae", "Leptophlebiidae", "Naucoridae", "Noteridae", 
-                   "Odonata.N", "Ostracoda", "Invertebrate.eggs", "Philopotamidae", 
-                   "Plecoptera", "Pleidae", "Psychodidae", "Simullidae", "Trichoptera.L", 
-                   "Trichoptera", "Vellidae", "Filamentous.Algae", "Plant.Matter", 
-                   "Organic.matter")
-
-terrestrial_items <- c("Acari", "Aranae", "Colembola", "Coleoptera", "Coleoptera.larva", 
-                       "Formicidae", "Hemiptera", "Hymenoptera", "Hydracarina", "Isoptera", 
-                       "Lampyridae", "Orthoptera", "Pseudoscorpionida", "Psocoptera", 
-                       "Scales", "Staphynilidae", "Thysanura", "Tingidae", "Vespidae", 
-                       "Seeds.and.Fruits")
-
-# Step 3: Find matching columns
-matching_aquatic <- intersect(colnames(The_food_items), aquatic_items)
-matching_terrestrial <- intersect(colnames(The_food_items), terrestrial_items)
-
-# Step 4: Update the items vectors
-aquatic_items <- matching_aquatic
-terrestrial_items <- matching_terrestrial
-
-# Function to calculate the total biomass for a given set of columns and items
-calculate_biomass <- function(data, items) {
-  colSums(data[, items, drop = FALSE], na.rm = TRUE)
-}
-
-# List of all location-month data frames
-location_months <- list(
-  CJ = columns_to_sum_CJ,
-  CA = columns_to_sum_CA,
-  CJL = columns_to_sum_CJL,
-  CO = columns_to_sum_CO,
-  IJ = columns_to_sum_IJ,
-  IA = columns_to_sum_IA,
-  IJL = columns_to_sum_IJL,
-  IO = columns_to_sum_IO,
-  NJ = columns_to_sum_NJ,
-  NAPRIL = columns_to_sum_NA,
-  NJL = columns_to_sum_NJL,
-  NO = columns_to_sum_NO,
-  UJ = columns_to_sum_UJ,
-  UJL = columns_to_sum_UJL,
-  UO = columns_to_sum_UO,
-  AJ = columns_to_sum_AJ,
-  AA = columns_to_sum_AA,
-  AJL = columns_to_sum_AJL,
-  GA = columns_to_sum_GA,
-  GJL = columns_to_sum_GJl,
-  GO = columns_to_sum_GO,
-  PJ = columns_to_sum_PJ,
-  PA = columns_to_sum_PA,
-  PJL = columns_to_sum_PJL
-)
-
-# Calculate and compare biomass for each location-month
-results <- lapply(names(location_months), function(lm) {
-  data <- location_months[[lm]]
-  
-  aquatic_biomass <- sum(calculate_biomass(data, aquatic_items), na.rm = TRUE)
-  terrestrial_biomass <- sum(calculate_biomass(data, terrestrial_items), na.rm = TRUE)
-  
-  main_source <- ifelse(aquatic_biomass > terrestrial_biomass, "Aquatic", "Terrestrial")
-  
-  data.frame(
-    Location_Month = lm,
-    Aquatic_Biomass = aquatic_biomass,
-    Terrestrial_Biomass = terrestrial_biomass,
-    Main_Source = main_source
-  )
-})
-
-#Correct biomass calculation
+#Now, biomass
 total_sum_PJL<- sum(The_food_items[560:568, 9:73], na.rm = TRUE) 
 total_sum_CJ <- sum(The_food_items[1:20 , 9:73], na.rm = TRUE)
 total_sum_CA <- sum(The_food_items[29:48 , 9:73], na.rm = TRUE) 
@@ -426,69 +343,3 @@ View(results_df)
 write.csv(results_df, "results_df.csv", row.names = FALSE)
 getwd()
 write.csv(results_df, "C:/Users/ENIOLA OLU-AYORINDE/Desktop/results_df.csv", row.names = FALSE)
-#THE ABOVE ONE WORKED
-
-
-
-
-
-
-
-
-
-location_months <- list(
-  CJ = total_sum_CJ,
-  CA = total_sum_CA,
-  CJL = total_sum_CJL,
-  CO = total_sum_CO,
-  IJ = total_sum_IJ,
-  IA =total_sum_IA,
-  IJL = total_sum_IJL,
-  IO = total_sum_IO,
-  NJ = total_sum_NJ,
-  NAPRIL = total_sum_NA,
-  NJL = total_sum_NJL,
-  NO = total_sum_NO,
-  UJ = total_sum_UJ,
-  UJL = total_sum_UJL,
-  UO = total_sum_UO,
-  AJ = total_sum_AJ,
-  AA = total_sum_AA,
-  AJL = total_sum_AJL,
-  GA = total_sum_GA,
-  GJL = total_sum_GJl,
-  GO = total_sum_GO,
-  PJ = total_sum_PJ,
-  PA = total_sum_PA,
-  PJL = total_sum_PJL
-)
-
-results <- lapply(names(location_months), function(lm) {
-  data <- location_months[[lm]]
-  
-  aquatic_biomass <- sum(calculate_biomass(data, aquatic_items), na.rm = TRUE)
-  terrestrial_biomass <- sum(calculate_biomass(data, terrestrial_items), na.rm = TRUE)
-  
-  main_source <- ifelse(aquatic_biomass > terrestrial_biomass, "Aquatic", "Terrestrial")
-  
-  data.frame(
-    Location_Month = lm,
-    Aquatic_Biomass = aquatic_biomass,
-    Terrestrial_Biomass = terrestrial_biomass,
-    Main_Source = main_source
-  )
-})
-
-
-
-# Combine results into a single data frame
-results_df <- do.call(rbind, results)
-
-# Print the results
-print(results_df)
-
-# Optionally, save the results to an Excel file
-library(openxlsx)
-write.xlsx(results_df, "Biomass_Source_Results.xlsx")
-
-getwd()
