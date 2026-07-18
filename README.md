@@ -1,2 +1,2 @@
-# THESIS
-Contains codes and the thesis for my masters
+
+This repository contains R scripts and figures for a study on the dietary ecology, reproductive biology, and environmental drivers of *Hemigrammus marginatus*. Analyses include Bray–Curtis dissimilarity and NMDS ordination of diet composition, PERMANOVA testing effects of vegetation index and precipitation on diet, linear mixed-effects models of niche width, resource richness, and biomass ratio, sex ratio and length–weight analyses, and models of gonadosomatic index (GSI) in relation to rainfall and niche width. Analyses were conducted in R using the `vegan`, `lme4`, and `DHARMa` packages.
