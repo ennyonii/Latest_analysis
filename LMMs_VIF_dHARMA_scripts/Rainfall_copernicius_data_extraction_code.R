@@ -23,11 +23,9 @@ all_results <- list()
 r_brazil <- ne_countries(country = "Brazil", returnclass = "sf")
 brazil_vect <- vect(r_brazil)
 
-# --- START PDF EXPORT ---
-# This creates a file in your folder. All plots after this will go into it.
+# This creates a file in folder. All plots after this will go into it.
 pdf("Sampling_Site_Precipitation_map.pdf", width = 8, height = 10)
 
-# 2. START THE LOOP ----------------------------------------------------------
 for(i in 1:nrow(samples_list)) {
   
   target_date <- samples_list$date[i]
