@@ -1,20 +1,15 @@
-# ============================================================
+################################################################
 # Fig 2.2 – Alimentary Index (AIi%) of dominant food items
 # Hemigrammus marginatus – Atlantic Forest vs Caatinga
-# Error bars = ± 1 SD across sites within each biome
-# ============================================================
+#ENIOLA OLU-AYORINDE
+#################################################################
 
 library(ggplot2)
 library(dplyr)
 library(tidyr)
 library(readxl)
 
-# ------------------------------------------------------------
-# 1. Load data
-# ------------------------------------------------------------
 df <- read_excel("generated_data/HMR_IAI.xlsx")
-
-
 
 atlantic_sites <- c("A", "G", "P")
 caatinga_sites <- c("C", "I", "N", "U")
@@ -29,9 +24,8 @@ dominant <- c("Insect Remains", "Filamentous Algae",
               "Formicidae", "Organic matter",
               "Ephemeroptera", "Others (Rare Items)")
 
-# ------------------------------------------------------------
 # 3. Reshape: dominant items + compute Others (Rare Items)
-# ------------------------------------------------------------
+
 long <- df %>%
   pivot_longer(-Prey, names_to = "Code", values_to = "AIi_prop") %>%
   mutate(
@@ -78,9 +72,7 @@ summary_df <- site_means %>%
     Prey = factor(Prey, levels = dominant)
   )
 
-# ------------------------------------------------------------
-# 4. Plot
-# ------------------------------------------------------------
+
 pp <- ggplot(summary_df, aes(x = Prey, y = mean_AIi)) +
   
   geom_col(fill = "grey40", width = 0.6) +
@@ -115,9 +107,7 @@ pp <- ggplot(summary_df, aes(x = Prey, y = mean_AIi)) +
                                     linewidth = 0.7)
   )
 pp
-# ------------------------------------------------------------
-# 5. Save
-# ------------------------------------------------------------
+
 ggsave("Fig2_2_AIi_errorbars.png", plot = pp,
        width = 8, height = 5, dpi = 300, bg = "white")
 
@@ -127,10 +117,7 @@ ggsave("Fig2_2_AIi_errorbars.pdf", plot = pp,
 message("Done! Saved: Fig2_2_AIi_errorbars.png / .pdf")
 
 
-
-
-# 2. Define sites and biome assignments
-# ------------------------------------------------------------
+#Define sites and biome assignments
 atlantic_sites <- c("A", "G", "P")
 caatinga_sites <- c("C", "I", "N", "U")
 
@@ -143,9 +130,7 @@ site_names <- c(
 dominant_items <- c("Insect Remains", "Filamentous Algae",
                     "Formicidae", "Organic matter", "Ephemeroptera")
 
-# ------------------------------------------------------------
 # 3. Reshape and compute Others (Rare Items)
-# ------------------------------------------------------------
 long <- df %>%
   pivot_longer(-Prey, names_to = "Code", values_to = "AIi_prop") %>%
   mutate(
@@ -191,9 +176,6 @@ site_means <- combined %>%
     Biome = factor(Biome, levels = c("Atlantic Forest", "Caatinga"))
   )
 
-# ------------------------------------------------------------
-# 4. Colour palette (colourblind-friendly)
-# ------------------------------------------------------------
 prey_colours <- c(
   "Insect Remains"      = "#E69F00",
   "Filamentous Algae"   = "#56B4E9",
@@ -203,9 +185,6 @@ prey_colours <- c(
   "Others (Rare Items)" = "#999999"
 )
 
-# ------------------------------------------------------------
-# 5. Plot
-# ------------------------------------------------------------
 ppp <- ggplot(site_means, aes(x = Site, y = AIi_site, fill = Prey)) +
   
   geom_col(width = 0.7, colour = "white", linewidth = 0.3) +
@@ -241,9 +220,6 @@ ppp <- ggplot(site_means, aes(x = Site, y = AIi_site, fill = Prey)) +
                                     linewidth = 0.7)
   )
 ppp
-# ------------------------------------------------------------
-# 6. Save
-# ------------------------------------------------------------
 ggsave("Fig2_2_stacked_by_site.png", plot = ppp,
        width = 9, height = 5, dpi = 300, bg = "white")
 
